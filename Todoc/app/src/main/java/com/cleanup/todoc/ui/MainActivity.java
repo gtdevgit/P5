@@ -16,19 +16,25 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.cleanup.todoc.MainApplication;
-import com.cleanup.todoc.crud.ProjectCrud;
-import com.cleanup.todoc.crud.TaskCrud;
 import com.cleanup.todoc.R;
+import com.cleanup.todoc.database.SaveMyTodocDatabase;
+import com.cleanup.todoc.database.dao.ProjectDao;
+import com.cleanup.todoc.database.dao.TaskDao;
+import com.cleanup.todoc.injection.Injection;
+import com.cleanup.todoc.injection.ViewModelFactory;
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.logging.LogManager;
 
 /**
  * <p>Home activity of the application which is displayed when the user opens the app.</p>
@@ -38,6 +44,9 @@ import java.util.Date;
  */
 public class MainActivity extends AppCompatActivity implements TasksAdapter.DeleteTaskListener {
     private static final String TAG = "Todoc MainActivity";
+
+    private TaskViewModel taskViewModel;
+
     /**
      * List of all projects available in the application
      */
@@ -97,44 +106,62 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     /**
      * access db for tasks table
      */
-    TaskCrud taskCrud = null;
+
+    private TaskDao tdao;
+
+    private void configureViewModel(){
+        Log.d(TAG, "configureViewModel() called");
+        ViewModelFactory viewModelFactory = Injection.provideViewModelFactory(this);
+        this.taskViewModel = ViewModelProviders.of(this, viewModelFactory).get(TaskViewModel.class);
+        this.taskViewModel.init();
+    }
+
+    private void getProjects(){
+        Log.d(TAG, "getProjects() called");
+        this.taskViewModel.getProjects().observe(this, this::getProjectsObserver);
+    }
+
+    private void getProjectsObserver(List<Project> projects){
+        Log.d(TAG, "getProjects() called with: projects = [" + projects + "]");
+        allProjects = new Project[projects.size()];
+        allProjects = projects.toArray(allProjects);
+    }
+
+    private void getTasks() {
+        Log.d(TAG, "getTasks() called");
+        this.taskViewModel.getTasks().observe(this, this::getTasksObserver);
+    }
+
+    private void getTasksObserver(List<Task> listTasks){
+        Log.d(TAG, "getTasks() called with: listTasks = [" + listTasks + "]");
+        tasks.clear();
+        tasks.addAll(listTasks);
+        updateTasks();
+    }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ProjectCrud projectCrud = new ProjectCrud((MainApplication) getApplicationContext());
-        allProjects = projectCrud.getAllAsArray();
-
-        taskCrud = new TaskCrud((MainApplication) getApplicationContext());
-
-
         Log.d(TAG, "onCreate() called with: savedInstanceState = [" + savedInstanceState + "]");
         setContentView(R.layout.activity_main);
 
-        Log.d(TAG, "onCreate(2)");
+        this.configureViewModel();
+        getProjects();
+        getTasks();
+
         listTasks = findViewById(R.id.list_tasks);
         lblNoTasks = findViewById(R.id.lbl_no_task);
-        Log.d(TAG, "onCreate(3)");
         listTasks.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        Log.d(TAG, "onCreate(4)");
         listTasks.setAdapter(adapter);
-        Log.d(TAG, "onCreate(5)");
         findViewById(R.id.fab_add_task).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showAddTaskDialog();
             }
         });
-        Log.d(TAG, "onCreate(6)");
-        loadAllTasks();
         Log.d(TAG, "onCreate() end");
-    }
-
-    public void loadAllTasks(){
-        tasks.clear();
-        tasks.addAll(taskCrud.getAll());
-        updateTasks();
     }
 
     @Override
@@ -165,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     @Override
     public void onDeleteTask(Task task) {
         tasks.remove(task);
-        taskCrud.delete(task.getId());
+        this.taskViewModel.deleteTask(task.getId());
         updateTasks();
     }
 
@@ -239,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
      */
     private void addTask(@NonNull Task task) {
         tasks.add(task);
-        taskCrud.insert(task);
+        this.taskViewModel.createTask(task);
         updateTasks();
     }
 
