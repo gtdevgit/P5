@@ -55,18 +55,6 @@ public class MainActivityInstrumentedTest {
         TextView lblNoTask = activity.findViewById(R.id.lbl_no_task);
         RecyclerView listTasks = activity.findViewById(R.id.list_tasks);
 
-        onView(withId(R.id.fab_add_task)).perform(click());
-        onView(withId(R.id.txt_task_name)).perform(replaceText("Tâche 1 "));
-        onView(withId(android.R.id.button1)).perform(click());
-
-        onView(withId(R.id.fab_add_task)).perform(click());
-        onView(withId(R.id.txt_task_name)).perform(replaceText("Tâche 2"));
-        onView(withId(android.R.id.button1)).perform(click());
-
-        onView(withId(R.id.fab_add_task)).perform(click());
-        onView(withId(R.id.txt_task_name)).perform(replaceText("Tâche 3 "));
-        onView(withId(android.R.id.button1)).perform(click());
-
         int count = listTasks.getAdapter().getItemCount();
         while (count > 0){
             RecyclerViewMatcher recyclerViewMatcher = new RecyclerViewMatcher(R.id.list_tasks);
@@ -74,6 +62,25 @@ public class MainActivityInstrumentedTest {
             onView(viewMatcher).perform(click());
             count = listTasks.getAdapter().getItemCount();
         }
+    }
+
+    @Test
+    public void addTasks() {
+        MainActivity activity = rule.getActivity();
+        TextView lblNoTask = activity.findViewById(R.id.lbl_no_task);
+        RecyclerView listTasks = activity.findViewById(R.id.list_tasks);
+
+        onView(withId(R.id.fab_add_task)).perform(click());
+        onView(withId(R.id.txt_task_name)).perform(replaceText("aaa Tâche example"));
+        onView(withId(android.R.id.button1)).perform(click());
+
+        onView(withId(R.id.fab_add_task)).perform(click());
+        onView(withId(R.id.txt_task_name)).perform(replaceText("zzz Tâche example"));
+        onView(withId(android.R.id.button1)).perform(click());
+
+        onView(withId(R.id.fab_add_task)).perform(click());
+        onView(withId(R.id.txt_task_name)).perform(replaceText("hhh Tâche example"));
+        onView(withId(android.R.id.button1)).perform(click());
     }
 
     @Test
