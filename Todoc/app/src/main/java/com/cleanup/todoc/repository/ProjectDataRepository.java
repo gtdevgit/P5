@@ -16,7 +16,6 @@ public class ProjectDataRepository {
 
     public ProjectDataRepository(ProjectDao projectDao) {
         Log.d(TAG, "ProjectDataRepository() called with: projectDao = [" + projectDao + "]");
-
         this.projectDao = projectDao;
     }
 

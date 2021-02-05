@@ -13,6 +13,9 @@ import java.util.List;
 @Dao
 public interface TaskDao {
     @Query("SELECT * FROM task")
+    List<Task> getTasksNow();
+
+    @Query("SELECT * FROM task")
     LiveData<List<Task>> getTasks();
 
     @Insert

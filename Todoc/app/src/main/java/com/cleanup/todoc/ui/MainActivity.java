@@ -16,15 +16,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cleanup.todoc.R;
-import com.cleanup.todoc.database.SaveMyTodocDatabase;
-import com.cleanup.todoc.database.dao.ProjectDao;
-import com.cleanup.todoc.database.dao.TaskDao;
 import com.cleanup.todoc.injection.Injection;
 import com.cleanup.todoc.injection.ViewModelFactory;
 import com.cleanup.todoc.model.Project;
@@ -106,9 +102,6 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     /**
      * access db for tasks table
      */
-
-    private TaskDao tdao;
-
     private void configureViewModel(){
         Log.d(TAG, "configureViewModel() called");
         ViewModelFactory viewModelFactory = Injection.provideViewModelFactory(this);

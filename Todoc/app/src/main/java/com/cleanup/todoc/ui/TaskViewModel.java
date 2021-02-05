@@ -14,8 +14,8 @@ import java.util.concurrent.Executor;
 
 public class TaskViewModel extends ViewModel {
 
-    private final ProjectDataRepository projectDataRepository;
-    private final TaskDataRepository taskDataRepository;
+    private final ProjectDataRepository projectDataSource;
+    private final TaskDataRepository taskDataSource;
     private final Executor executor;
 
     @Nullable
@@ -24,8 +24,8 @@ public class TaskViewModel extends ViewModel {
 
 
     public TaskViewModel(ProjectDataRepository projectDataRepository, TaskDataRepository taskDataRepository, Executor executor) {
-        this.projectDataRepository = projectDataRepository;
-        this.taskDataRepository = taskDataRepository;
+        this.projectDataSource = projectDataRepository;
+        this.taskDataSource = taskDataRepository;
         this.executor = executor;
     }
 
@@ -34,8 +34,9 @@ public class TaskViewModel extends ViewModel {
         if (this.projects != null) {
             return;
         }
-        projects = projectDataRepository.getProjects();
-        tasks = taskDataRepository.getTasks();
+        projects = projectDataSource.getProjects();
+        tasks = taskDataSource.getTasks();
+
     }
 
     public LiveData<List<Project>> getProjects() {
@@ -48,19 +49,19 @@ public class TaskViewModel extends ViewModel {
 
     public void createTask(Task task){
         executor.execute(() -> {
-            taskDataRepository.createTask(task);
+            taskDataSource.createTask(task);
         });
     }
 
     public void deleteTask(long id){
         executor.execute(() -> {
-            taskDataRepository.deleteTask(id);
+            taskDataSource.deleteTask(id);
         });
     }
 
     public void updateTask(Task task) {
         executor.execute(() -> {
-            taskDataRepository.updateItem(task);
+            taskDataSource.updateItem(task);
         });
     }
 }

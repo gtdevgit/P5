@@ -5,10 +5,8 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
-import androidx.room.Update;
 
 import com.cleanup.todoc.model.Project;
-import com.cleanup.todoc.model.Task;
 
 import java.util.List;
 
@@ -22,4 +20,7 @@ public interface ProjectDao {
 
     @Query("SELECT * FROM project")
     LiveData<List<Project>> getProjects();
+
+    @Query("SELECT * FROM project")
+    List<Project> getProjectsNow();
 }

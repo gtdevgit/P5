@@ -16,15 +16,15 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
 
     private static final String TAG = "Todoc ViewModelFactory";
 
-    private final ProjectDataRepository projectDataRepository;
-    private final TaskDataRepository taskDataRepository;
+    private final ProjectDataRepository projectDataSource;
+    private final TaskDataRepository taskDataSource;
     private final Executor executor;
 
     public ViewModelFactory(ProjectDataRepository projectDataRepository, TaskDataRepository taskDataRepository, Executor executor) {
         Log.d(TAG, "ViewModelFactory() called");
 
-        this.projectDataRepository = projectDataRepository;
-        this.taskDataRepository = taskDataRepository;
+        this.projectDataSource = projectDataRepository;
+        this.taskDataSource = taskDataRepository;
         this.executor = executor;
     }
 
@@ -34,7 +34,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         Log.d(TAG, "create() called");
 
         if (modelClass.isAssignableFrom(TaskViewModel.class)) {
-            return (T) new TaskViewModel(projectDataRepository, taskDataRepository, executor);
+            return (T) new TaskViewModel(projectDataSource, taskDataSource, executor);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
     }

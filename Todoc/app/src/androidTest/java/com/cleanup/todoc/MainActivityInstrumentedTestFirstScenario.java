@@ -1,16 +1,20 @@
 package com.cleanup.todoc;
 
-import android.os.SystemClock;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.test.espresso.ViewInteraction;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.ActivityTestRule;
 
 import com.cleanup.todoc.ui.MainActivity;
 
+import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,9 +23,11 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.cleanup.todoc.TestUtils.withRecyclerView;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -53,6 +59,23 @@ public class MainActivityInstrumentedTestFirstScenario {
             removeFirstTask();
             count = listTasks.getAdapter().getItemCount();
         }
+    }
+
+    private void addTaskProject(String name, int projectPosition){
+        onView(withId(R.id.fab_add_task)).perform(click());
+        onView(withId(R.id.txt_task_name)).perform(replaceText(name));
+
+        ViewInteraction appCompatSpinner = onView(
+                allOf(withId(R.id.project_spinner),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.custom),
+                                        0),
+                                projectPosition),
+                        isDisplayed()));
+        appCompatSpinner.perform(click());
+
+        onView(withId(android.R.id.button1)).perform(click());
     }
 
     private void addTask(String name){
@@ -91,6 +114,7 @@ public class MainActivityInstrumentedTestFirstScenario {
         assertThat(listTasks.getVisibility(), equalTo(View.GONE));
 
         // add tasks
+        //addTaskProject("aaa Tâche example", 2);
         addTask("aaa Tâche example");
         addTask("zzz Tâche example");
         addTask("hhh Tâche example");
@@ -126,5 +150,24 @@ public class MainActivityInstrumentedTestFirstScenario {
 
         removeFirstTask();;
         checkTaskCount(listTasks, 2);
+    }
+
+    private static Matcher<View> childAtPosition(
+            final Matcher<View> parentMatcher, final int position) {
+
+        return new TypeSafeMatcher<View>() {
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Child at position " + position + " in parent ");
+                parentMatcher.describeTo(description);
+            }
+
+            @Override
+            public boolean matchesSafely(View view) {
+                ViewParent parent = view.getParent();
+                return parent instanceof ViewGroup && parentMatcher.matches(parent)
+                        && view.equals(((ViewGroup) parent).getChildAt(position));
+            }
+        };
     }
 }

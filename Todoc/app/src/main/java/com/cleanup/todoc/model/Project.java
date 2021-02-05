@@ -103,6 +103,7 @@ public class Project {
         return color;
     }
 
+    // for spinner, to show name
     @Override
     @NonNull
     public String toString() {

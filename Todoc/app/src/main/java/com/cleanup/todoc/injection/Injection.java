@@ -14,13 +14,13 @@ public class Injection {
 
     private static final String TAG = "Todoc Injection";
 
-    public static ProjectDataRepository provideProjectDataRepository(Context context) {
+    public static ProjectDataRepository provideProjectDataSource(Context context) {
         Log.d(TAG, "provideProjectDataRepository() called with: context = [" + context + "]");
         SaveMyTodocDatabase db = SaveMyTodocDatabase.getInstance(context);
         return new ProjectDataRepository(db.projectDao());
     }
 
-    public static TaskDataRepository provideTaskDataRepository(Context context) {
+    public static TaskDataRepository provideTaskDataSource(Context context) {
         Log.d(TAG, "provideTaskDataRepository() called with: context = [" + context + "]");
         SaveMyTodocDatabase db = SaveMyTodocDatabase.getInstance(context);
         return new TaskDataRepository(db.taskDao());
@@ -32,12 +32,10 @@ public class Injection {
     }
 
     public static ViewModelFactory provideViewModelFactory(Context context) {
-
         Log.d(TAG, "provideViewModelFactory() called");
-
-        ProjectDataRepository projectDataRepository = provideProjectDataRepository(context);
-        TaskDataRepository taskDataRepository = provideTaskDataRepository(context);
+        ProjectDataRepository dataSourceProject = provideProjectDataSource(context);
+        TaskDataRepository dataSourceTask = provideTaskDataSource(context);
         Executor executor = provideExecutor();
-        return new ViewModelFactory(projectDataRepository, taskDataRepository, executor);
+        return new ViewModelFactory(dataSourceProject, dataSourceTask, executor);
     }
 }

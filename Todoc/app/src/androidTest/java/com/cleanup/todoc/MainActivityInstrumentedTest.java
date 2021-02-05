@@ -1,7 +1,7 @@
 package com.cleanup.todoc;
 
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule;
+
 import android.view.View;
 import android.widget.TextView;
 

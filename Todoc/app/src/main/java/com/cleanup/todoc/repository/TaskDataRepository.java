@@ -24,6 +24,10 @@ public class TaskDataRepository {
         return this.taskDao.getTasks();
     }
 
+    public List<Task> getTasksNow() {
+        return this.taskDao.getTasksNow();
+    }
+
     public void createTask(Task task){
         this.taskDao.insertItem(task);
     }
