@@ -148,7 +148,7 @@ public class MainActivityInstrumentedTestFirstScenario {
         checkTaskName(1, "zzz Tâche example");
         checkTaskName(2, "aaa Tâche example");
 
-        removeFirstTask();;
+        removeFirstTask();
         checkTaskCount(listTasks, 2);
     }
 

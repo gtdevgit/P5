@@ -30,13 +30,11 @@ public class TaskViewModel extends ViewModel {
     }
 
     public void init(){
-        // C'est moche !
         if (this.projects != null) {
             return;
         }
         projects = projectDataSource.getProjects();
         tasks = taskDataSource.getTasks();
-
     }
 
     public LiveData<List<Project>> getProjects() {
