@@ -82,9 +82,9 @@ public abstract class SaveMyTodocDatabase extends RoomDatabase {
         // POUR TEST A SUPPRIMER
         Task[] sampleTasks = new Task[]{
                 new Task(1L, 1L, "tache 1", new Date().getTime()),
-                new Task(2L, 1L, "tache 2", new Date().getTime()),
+                new Task(2L, 1L, "tache 2", new Date().getTime() + 10),
                 new Task(3L, 1L, "tache 3", new Date().getTime()),
-                new Task(4L, 1L, "tache 4", new Date().getTime()),
+                new Task(4L, 1L, "tache 4", new Date().getTime() + 20),
                 new Task(5L, 1L, "tache 5", new Date().getTime()),
                 new Task(6L, 1L, "tache 6", new Date().getTime())
         };
